@@ -6,14 +6,13 @@ public class PlayerMovement : MonoBehaviour
 {
 	public float playerSpeed;
 	static Animator anim;
-	static Rigidbody rb;
 	public float walkAnimationSpeed;
+	public Transform cameraTransform;
 	// Use this for initialization
 	void Start ()
 	{
 		anim = GetComponent<Animator> ();
 		anim.speed = walkAnimationSpeed;
-		rb = GetComponent<Rigidbody> ();
 	}
 	
 	// FixedUpdate is called several times per frame
@@ -33,12 +32,11 @@ public class PlayerMovement : MonoBehaviour
 			aSpeed = walkAnimationSpeed;
 			anim.speed = aSpeed;
 		}
-		float moveHorizontal = Input.GetAxis ("Horizontal");
+		float moveSideways = Input.GetAxis ("Horizontal")*Time.deltaTime*speed;
 		float moveVertical = Input.GetAxis ("Vertical")*Time.deltaTime*speed;
-
-		Transform.Rotate (0, moveHorizontal, 0);
-		rb.MovePosition (new Vector3(0,0,moveVertical));
-
+        
+        transform.Translate(moveSideways, 0, moveVertical);
+		transform.rotation = Quaternion.Euler (0,cameraTransform.rotation.y,0);
 		if (moveVertical > 0)
 		{
 			anim.SetBool ("isWalkingBack",false);
