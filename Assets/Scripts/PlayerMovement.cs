@@ -7,14 +7,18 @@ public class PlayerMovement : MonoBehaviour
 	public float playerSpeed;
 	static Animator anim;
 	public float walkAnimationSpeed;
-	public Transform cameraTransform;
+	public float rotationSpeed;
 	// Use this for initialization
 	void Start ()
 	{
 		anim = GetComponent<Animator> ();
 		anim.speed = walkAnimationSpeed;
 	}
-	
+	void Update()
+	{
+		float rotate = Input.GetAxis ("Mouse X") * rotationSpeed;
+		transform.Rotate (0, rotate, 0);
+	}
 	// FixedUpdate is called several times per frame
 	void FixedUpdate ()
 	{
@@ -34,18 +38,22 @@ public class PlayerMovement : MonoBehaviour
 		}
 		float moveSideways = Input.GetAxis ("Horizontal")*Time.deltaTime*speed;
 		float moveVertical = Input.GetAxis ("Vertical")*Time.deltaTime*speed;
-        
         transform.Translate(moveSideways, 0, moveVertical);
-		transform.rotation = Quaternion.Euler (0,cameraTransform.rotation.y,0);
+
 		if (moveVertical > 0)
 		{
-			anim.SetBool ("isWalkingBack",false);
+			anim.SetBool ("isWalkingBack", false);
 			anim.SetBool ("isWalking", true);
 		}
 		else if (moveVertical < 0)
 		{
-			anim.SetBool ("isWalking",false);
+			anim.SetBool ("isWalking", false);
 			anim.SetBool ("isWalkingBack", true);
+		}
+		else if (Mathf.Abs (moveSideways) > 0)
+		{
+			anim.SetBool ("isWalkingBack", false);
+			anim.SetBool ("isWalking", true);
 		}
 		else
 		{
